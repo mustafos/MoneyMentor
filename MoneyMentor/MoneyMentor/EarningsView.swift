@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  EarningsView.swift
 //  MoneyMentor
 //
-//  Created by Mustafa Bekirov on 23.09.2024.
+//  Created by Mustafa Bekirov on 02.10.2024.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct EarningsView: View {
     @State var time = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @State var count = 50
     @State var level = 50
@@ -26,12 +26,13 @@ struct ContentView: View {
                 Button {
                     addPress()
                 } label: {
-                    Text("\(buttonP)")
-                        .font(.largeTitle)
-                        .foregroundStyle(.white)
-                        .frame(width: 150, height: 150)
-                        .background(.red)
-                        .clipShape(Circle())
+                    VStack {
+                        Image(systemName: "hand.tap")
+                        Text("\(buttonP)")
+                        Text("Click in this area to earn money")
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.white)
                 }
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text(title), message: Text("Reset or Move to Next Level"), primaryButton: .default(Text("Reset"), action: {
@@ -42,7 +43,8 @@ struct ContentView: View {
                 }
                 Spacer()
             }.padding()
-        }.onReceive(time) { (_) in
+        }
+        .onReceive(time) { (_) in
             minusNum()
         }
     }
@@ -80,5 +82,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    EarningsView()
 }
