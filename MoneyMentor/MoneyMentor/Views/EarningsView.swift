@@ -20,9 +20,10 @@ struct EarningsView: View {
     // New state variables for tap animation
     @State private var tapLocation: CGPoint = .zero
     @State private var showTapAnimation = false
-    @State private var clickText = "+1"
     @State private var animationOffset: CGFloat = 0 // Смещение для анимации вверх
     @State private var animationOpacity: Double = 1.0 // Прозрачность текста
+    
+    @State private var showRewardedAds: Bool = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -33,12 +34,11 @@ struct EarningsView: View {
                     // Захват местоположения касания и запуск анимации
                     let tapLocationInView = locationInView(location: location)
                     tapLocation = tapLocationInView
-                    clickText = "+1" // или логика для разных значений
                     animationOffset = 0 // Сбрасываем смещение
                     animationOpacity = 1.0 // Сбрасываем прозрачность
                     showTapAnimation = true
-                    withAnimation(.smooth) {
-                        animationOffset = -50 // Смещаем вверх на 50
+                    withAnimation(.snappy) {
+                        animationOffset = -100 // Смещаем вверх на 50
                         animationOpacity = 0.0 // Постепенно исчезаем
                     }
                     addPress()
@@ -79,6 +79,7 @@ struct EarningsView: View {
                 .shadow(radius: 2)
                 
                 Text("\(count)")
+                
                 rewardedAdButton
                 
                 VStack {
@@ -110,16 +111,22 @@ struct EarningsView: View {
             // Анимация отображения текста на месте касания
             Group {
                 if showTapAnimation {
-                    Text(clickText)
-                        .font(.largeTitle)
-                        .foregroundColor(.white)
-                        .bold()
+                    Image(systemName: "dollarsign")
+                        .imageScale(.medium)
+                        .foregroundStyle(.white)
                         .position(tapLocation)
                         .offset(y: animationOffset) // Смещаем текст вверх
                         .opacity(animationOpacity) // Меняем прозрачность
                 }
             }
         )
+        .onAppear {
+            withAnimation {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    showRewardedAds.toggle()
+                }
+            }
+        }
     }
     
     func addPress() {
@@ -244,6 +251,10 @@ extension EarningsView {
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
         .buttonStyle(.plain)
+        .padding(.top, -10)
+        .animation(.easeInOut(duration: 1.5), value: showRewardedAds)
+        .opacity($showRewardedAds.wrappedValue ? 1 : 0)
+        .offset(y: $showRewardedAds.wrappedValue ? 0 : -100)
     }
 }
 
