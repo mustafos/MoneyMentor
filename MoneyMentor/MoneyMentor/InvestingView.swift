@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InvestingView: View {
+    
     var body: some View {
         Text("Investing")
     }

@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct MoneyMentorApp: App {
+    @StateObject private var balanceManager = BalanceManager()
+    
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environmentObject(balanceManager)
         }
     }
 }
