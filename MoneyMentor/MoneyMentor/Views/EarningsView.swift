@@ -17,9 +17,34 @@ struct EarningsView: View {
     @State var showAlert = false
     @State var title = ""
     
+    // New state variables for tap animation
+    @State private var tapLocation: CGPoint = .zero
+    @State private var showTapAnimation = false
+    @State private var clickText = "+1"
+    @State private var animationOffset: CGFloat = 0 // Смещение для анимации вверх
+    @State private var animationOpacity: Double = 1.0 // Прозрачность текста
+    
     var body: some View {
         ZStack(alignment: .top) {
-            Color("EliteTealColor").ignoresSafeArea()
+            Color("EliteTealColor")
+                .ignoresSafeArea()
+                .coordinateSpace(name: "tapArea") // Указываем пространство координат
+                .onTapGesture { location in
+                    // Захват местоположения касания и запуск анимации
+                    let tapLocationInView = locationInView(location: location)
+                    tapLocation = tapLocationInView
+                    clickText = "+1" // или логика для разных значений
+                    animationOffset = 0 // Сбрасываем смещение
+                    animationOpacity = 1.0 // Сбрасываем прозрачность
+                    showTapAnimation = true
+                    withAnimation(.smooth) {
+                        animationOffset = -50 // Смещаем вверх на 50
+                        animationOpacity = 0.0 // Постепенно исчезаем
+                    }
+                    addPress()
+                    balanceManager.earnMoneyClick()
+                }
+            
             RoundedRectangle(cornerRadius: 20)
                 .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.green.opacity(0.3)]), startPoint: .top, endPoint: .bottom))
                 .frame(maxWidth: .infinity, maxHeight: 325)
@@ -66,7 +91,6 @@ struct EarningsView: View {
                     Text("Click in this area to earn money")
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                .background(.white)
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text(title), message: Text("Reset or Move to Next Level"), primaryButton: .default(Text("Reset"), action: {
                         rest()
@@ -76,14 +100,26 @@ struct EarningsView: View {
                 }
                 Spacer()
             }
-            .onTapGesture {
-                addPress()
-                balanceManager.earnMoneyClick()
-            }
         }
-//                .onReceive(time) { (_) in
-//                    minusNum()
-//                }
+        //                .onReceive(time) { (_) in
+        //                    minusNum()
+        //                }
+        
+        // Animated tap feedback
+        .overlay(
+            // Анимация отображения текста на месте касания
+            Group {
+                if showTapAnimation {
+                    Text(clickText)
+                        .font(.largeTitle)
+                        .foregroundColor(.white)
+                        .bold()
+                        .position(tapLocation)
+                        .offset(y: animationOffset) // Смещаем текст вверх
+                        .opacity(animationOpacity) // Меняем прозрачность
+                }
+            }
+        )
     }
     
     func addPress() {
@@ -115,6 +151,13 @@ struct EarningsView: View {
         level += 10
         count = level
         showAlert = false
+    }
+    
+    // Функция для получения координат касания внутри вью
+    func locationInView(location: CGPoint) -> CGPoint {
+        // Если нужно использовать сложные расчеты или обработку координат
+        // Здесь мы можем вернуть те же координаты для простоты
+        return location
     }
 }
 

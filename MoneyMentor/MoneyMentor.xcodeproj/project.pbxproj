@@ -8,11 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6A9B09FD2CAD777200D45E50 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B09FC2CAD777200D45E50 /* AppView.swift */; };
-		6A9B0A012CAD83AE00D45E50 /* InvestingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B0A002CAD83AE00D45E50 /* InvestingView.swift */; };
-		6A9B0A032CAD83C600D45E50 /* BusinessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B0A022CAD83C600D45E50 /* BusinessView.swift */; };
-		6A9B0A052CAD83D800D45E50 /* EarningsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B0A042CAD83D800D45E50 /* EarningsView.swift */; };
-		6A9B0A072CAD83EB00D45E50 /* ItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B0A062CAD83EB00D45E50 /* ItemsView.swift */; };
-		6A9B0A092CAD83F800D45E50 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9B0A082CAD83F800D45E50 /* ProfileView.swift */; };
 		6AB1CC322CA161C10041CFA4 /* MoneyMentorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB1CC312CA161C10041CFA4 /* MoneyMentorApp.swift */; };
 		6AB1CC362CA161C30041CFA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6AB1CC352CA161C30041CFA4 /* Assets.xcassets */; };
 		6AB1CC392CA161C30041CFA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6AB1CC382CA161C30041CFA4 /* Preview Assets.xcassets */; };
@@ -20,11 +15,6 @@
 
 /* Begin PBXFileReference section */
 		6A9B09FC2CAD777200D45E50 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
-		6A9B0A002CAD83AE00D45E50 /* InvestingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestingView.swift; sourceTree = "<group>"; };
-		6A9B0A022CAD83C600D45E50 /* BusinessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessView.swift; sourceTree = "<group>"; };
-		6A9B0A042CAD83D800D45E50 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
-		6A9B0A062CAD83EB00D45E50 /* ItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsView.swift; sourceTree = "<group>"; };
-		6A9B0A082CAD83F800D45E50 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		6AB1CC2E2CA161C10041CFA4 /* MoneyMentor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoneyMentor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6AB1CC312CA161C10041CFA4 /* MoneyMentorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyMentorApp.swift; sourceTree = "<group>"; };
 		6AB1CC352CA161C30041CFA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -32,6 +22,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6A0FEB8A2CB7E04C0060073A /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
+		6A0FEBA22CB7E86D0060073A /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		6A9B0A0C2CADAA3600D45E50 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -68,11 +60,8 @@
 				6AB1CC312CA161C10041CFA4 /* MoneyMentorApp.swift */,
 				6A9B09FC2CAD777200D45E50 /* AppView.swift */,
 				6A9B0A0C2CADAA3600D45E50 /* ViewModels */,
-				6A9B0A022CAD83C600D45E50 /* BusinessView.swift */,
-				6A9B0A002CAD83AE00D45E50 /* InvestingView.swift */,
-				6A9B0A042CAD83D800D45E50 /* EarningsView.swift */,
-				6A9B0A062CAD83EB00D45E50 /* ItemsView.swift */,
-				6A9B0A082CAD83F800D45E50 /* ProfileView.swift */,
+				6A0FEBA22CB7E86D0060073A /* Views */,
+				6A0FEB8A2CB7E04C0060073A /* Utilities */,
 				6AB1CC352CA161C30041CFA4 /* Assets.xcassets */,
 				6AB1CC372CA161C30041CFA4 /* Preview Content */,
 			);
@@ -103,6 +92,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				6A0FEB8A2CB7E04C0060073A /* Utilities */,
+				6A0FEBA22CB7E86D0060073A /* Views */,
 				6A9B0A0C2CADAA3600D45E50 /* ViewModels */,
 			);
 			name = MoneyMentor;
@@ -160,13 +151,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A9B0A092CAD83F800D45E50 /* ProfileView.swift in Sources */,
-				6A9B0A012CAD83AE00D45E50 /* InvestingView.swift in Sources */,
-				6A9B0A032CAD83C600D45E50 /* BusinessView.swift in Sources */,
-				6A9B0A072CAD83EB00D45E50 /* ItemsView.swift in Sources */,
 				6AB1CC322CA161C10041CFA4 /* MoneyMentorApp.swift in Sources */,
 				6A9B09FD2CAD777200D45E50 /* AppView.swift in Sources */,
-				6A9B0A052CAD83D800D45E50 /* EarningsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
