@@ -5,6 +5,264 @@
 //  Created by Mustafa Bekirov on 10.10.2024.
 //
 
+import AdSupport
+import AppTrackingTransparency
+import Foundation
+
+// AdUnit
+enum AdUnit {
+    case homeRewarded
+    case homeInterstitial
+    case homeBanner
+    case homeOpenAd
+    // You should return your ad unit IDs here
+    var unitID: String {
+        switch self {
+#if DEBUG
+            // Admob Test ID
+        case .homeRewarded: return "ca-app-pub-3940256099942544/1712485313"
+        case .homeInterstitial: return "ca-app-pub-3940256099942544/5135589807"
+        case .homeBanner: return "ca-app-pub-3940256099942544/2934735716"
+        case .homeOpenAd: return "ca-app-pub-3940256099942544/5662855259"
+#else
+            // Admob ID
+        case .homeRewarded: return Configuration.admobRewarded
+        case .homeInterstitial: return Configuration.admobInterstitial
+        case .homeBanner: return Configuration.admobBanner
+        case .homeOpenAd: return Configuration.admobAppOpen
+#endif
+        }
+    }
+}
+
+import SwiftUI
+import AdSupport
+import AppTrackingTransparency
+
+// NEWLY ADDED PERMISSIONS FOR iOS 14
+func requestPermission() {
+    @AppStorage("isPurchased") var isPurchased = false
+    @AppStorage("requestAds") var requestAds = false
+    if !isPurchased {
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .authorized:
+                    // Tracking authorization dialog was shown
+                    // and we are authorized
+                    print("Authorized")
+                    requestAds = true
+                    // Now that we are authorized we can get the IDFA
+                    print(ASIdentifierManager.shared().advertisingIdentifier)
+                case .denied:
+                    // Tracking authorization dialog was
+                    // shown and permission is denied
+                    print("Denied")
+                    requestAds = true
+                case .notDetermined:
+                    // Tracking authorization dialog has not been shown
+                    print("Not Determined")
+                    requestAds = true
+                case .restricted:
+                    print("Restricted")
+                    requestAds = true
+                @unknown default:
+                    print("Unknown")
+                }
+            }
+        }
+    }
+}
+
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            Image(systemName: "globe")
+                .imageScale(.large)
+                .foregroundColor(.blue)
+            Text("Hello, world!")
+            Spacer()
+            BannerAdView(adFormat: .standartBanner, onShow: { print("Show Banner") })
+        }
+        .padding()
+        .onAppear(perform: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                requestPermission()
+            }
+        })
+    }
+}
+
+#Preview {
+    ContentView()
+}
+
+
+// MARK: – BannerAdView
+// ----------------------------------------------------------------------------------------------------------------
+import SwiftUI
+import GoogleMobileAds
+
+enum AdFormat {
+    case standartBanner
+    case largeBanner
+    case mediumRectangle
+    case fullBanner
+    case leaderboard
+    case skyscraper
+    case fluid
+    case adaptiveBanner
+    var adSize: GADAdSize {
+        switch self {
+        case .standartBanner: return GADAdSizeBanner // iPhone and iPod Touch ad size. Typically 320x50.
+        case .largeBanner: return GADAdSizeLargeBanner // Taller version of GADAdSizeBanner. Typically 320x100.
+        case .mediumRectangle: return GADAdSizeMediumRectangle // Medium Rectangle size for the iPad (especially in a UISplitView's left pane). Typically 300x250.
+        case .fullBanner: return GADAdSizeFullBanner // Full Banner size for the iPad (especially in a UIPopoverController or in UIModalPresentationFormSheet). Typically 468x60.
+        case .leaderboard: return GADAdSizeLeaderboard // Leaderboard size for the iPad. Typically 728x90.
+        case .skyscraper: return GADAdSizeSkyscraper // Skyscraper size for the iPad. Mediation only. AdMob/Google does not offer this size. Typically 120x600.
+        case .fluid: return GADAdSizeFluid // An ad size that spans the full width of its container, with a height dynamically determined by the ad.
+        case .adaptiveBanner: return GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(UIScreen.main.bounds.size.width)
+        }
+    }
+    var size: CGSize {
+        adSize.size
+    }
+}
+// ------------
+enum AdStatus {
+    case loading
+    case success
+    case failure
+}
+// -------------
+struct BannerAdView: View {
+    var adUnit: AdUnit = AdUnit.homeBanner
+    let adFormat: AdFormat
+    @State var adStatus: AdStatus = .loading
+    var onShow: () -> Void
+    @AppStorage("isPurchased") var isPurchased = false
+    var body: some View {
+        if !isPurchased {
+            HStack {
+                if adStatus != .failure {
+                    BannerView(adUnitID: adUnit.unitID, adSize: adFormat.adSize, adStatus: $adStatus)
+                        .frame(width: adFormat.size.width, height: adFormat.size.height)
+                        .onChange(of: adStatus) { status in
+                            if status == .success {
+                                onShow()
+                            }
+                        }
+                }
+            }.frame(maxWidth: .infinity)
+        }
+        else {
+            EmptyView()
+        }
+    }
+}
+// ----------------------
+struct BannerView: UIViewControllerRepresentable {
+    let adUnitID: String
+    let adSize: GADAdSize
+    @Binding var adStatus: AdStatus
+    init(adUnitID: String, adSize: GADAdSize, adStatus: Binding<AdStatus>) {
+        self.adUnitID = adUnitID
+        self.adSize = adSize
+        _adStatus = adStatus
+    }
+    @State private var viewWidth: CGFloat = .zero
+    private let bannerView = GADBannerView()
+    // private let adUnitID = "ca-app-pub-3940256099942544/2435281174"
+    func makeUIViewController(context: Context) -> some UIViewController {
+        let bannerViewController = BannerViewController()
+        bannerView.adUnitID = adUnitID
+        bannerView.rootViewController = bannerViewController
+        bannerView.delegate = context.coordinator
+        bannerViewController.view.addSubview(bannerView)
+        bannerViewController.delegate = context.coordinator
+        return bannerViewController
+    }
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+        // guard viewWidth != .zero else { return }
+        bannerView.adSize = adSize // GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(viewWidth)
+        bannerView.load(GADRequest())
+    }
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    internal class Coordinator: NSObject, BannerViewControllerWidthDelegate, GADBannerViewDelegate {
+        let parent: BannerView
+        init(_ parent: BannerView) {
+            self.parent = parent
+        }
+        // MARK: - BannerViewControllerWidthDelegate methods
+        func bannerViewController(
+            _ bannerViewController: BannerViewController, didUpdate width: CGFloat
+        ) {
+            parent.viewWidth = width
+        }
+        // MARK: - GADBannerViewDelegate methods
+        func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+            print("bannerViewDidReceiveAd")
+            parent.adStatus = .success
+        }
+        func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+            print("didFailToReceiveAdWithError: \(error.localizedDescription)")
+            parent.adStatus = .failure
+        }
+        
+        func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
+            print("bannerViewDidRecordImpression")
+        }
+        
+        func bannerViewDidRecordClick(_ bannerView: GADBannerView) {
+            print("bannerViewDidRecordClick")
+        }
+        
+        func bannerViewWillPresentScreen(_ bannerView: GADBannerView) {
+            print("bannerViewWillPresentScreen")
+        }
+        
+        func bannerViewWillDismissScreen(_ bannerView: GADBannerView) {
+            print("bannerViewWillDismissScreen")
+        }
+    }
+}
+
+protocol BannerViewControllerWidthDelegate: AnyObject {
+    func bannerViewController(_ bannerViewController: BannerViewController, didUpdate width: CGFloat)
+}
+
+class BannerViewController: UIViewController {
+    weak var delegate: BannerViewControllerWidthDelegate?
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        delegate?.bannerViewController(
+            self, didUpdate: view.frame.inset(by: view.safeAreaInsets).size.width)
+    }
+    override func viewWillTransition(
+        to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator
+    ) {
+        coordinator.animate { _ in
+            // do nothing
+        } completion: { _ in
+            self.delegate?.bannerViewController(
+                self, didUpdate: self.view.frame.inset(by: self.view.safeAreaInsets).size.width)
+        }
+    }
+}
+
+// MARK: – BANNER VIEW
+// ----------------------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------------
+
 //import UIKit
 //import GoogleMobileAds
 //

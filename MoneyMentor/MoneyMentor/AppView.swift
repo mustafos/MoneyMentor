@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AppView: View {
+    @EnvironmentObject var balanceManager: BalanceManager
     @State private var selectedTab: Tab = .earnings
     
     init() {
@@ -19,7 +20,9 @@ struct AppView: View {
             VStack {
                 TabView(selection: $selectedTab) {
                     ForEach(Tab.allCases, id: \.rawValue) { tab in
-                        contentView(for: tab).tag(tab)
+                        contentView(for: tab)
+                            .tag(tab)
+                            .environmentObject(balanceManager)
                     }
                 }
             }

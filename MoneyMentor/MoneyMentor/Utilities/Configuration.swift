@@ -14,4 +14,7 @@ enum Configuration {
     static let termsURL = "https://mustafos.github.io/terms.html"
     static let admobAppID = "ca-app-pub-4744463005672993~2729884007"
     static let admobBanner = "ca-app-pub-4744463005672993/7537092788"
+    static let admobInterstitial = "ca-app-pub-4744463005672993/7748376582"
+    static let admobRewarded = "ca-app-pub-4744463005672993/2709407555"
+    static let admobAppOpen = "ca-app-pub-4744463005672993/6263904525"
 }
